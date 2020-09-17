@@ -1,0 +1,20 @@
+---
+title: "Long Form Responses"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmarkdown)
+library(tidyverse)
+
+knitr::opts_chunk$set(echo = TRUE)
+
+source("../load_data.R")
+
+long_data <- clean_data %>% select(Q70, id) %>% filter(!is.na(Q70)) %>% 
+  mutate(response = paste("1. ", Q70, "\n")) %>% 
+  pull(response) %>% paste(., collapse = "\n")
+```
+
+`r long_data`
