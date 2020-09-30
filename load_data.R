@@ -1,13 +1,23 @@
-library(tidyverse)
+library(tidyverse) #for data wrangling
+library(data.table) #for setnames()
 
-raw_data <- read_csv("../data/raw_job_survey_data")
+raw_data <- read_csv("data/raw_job_survey_data.csv") #load data
 
-q_list <- raw_data[1,] %>% gather(., key = Q_number, value = Question)
+q_list <- read_csv("data/question_legend.csv") #csv of q numbers, full q, & column names
 
-clean_data <- raw_data[-c(1,2,3),] %>% select(-(1:17)) 
+q_num <- q_list %>% pull(Q_number)#list of q numbers
 
-clean_data <- mutate(clean_data, id = rownames(clean_data))
+q_data <- q_list %>% pull(Data) #list of column names
 
-demographics <- clean_data %>% select(Q6:Q23)
+data <- raw_data[-c(1,2,3),] %>% select(-(1:17)) #drop unnecessary data 
 
-covid <- clean_data %>% select(Q114, Q115, Q116)
+setnames(data, old = q_num, new = q_data) #rename columns
+
+data <- mutate(data, id = rownames(data)) #generate unique ids
+
+## question-based datasets----
+
+demographics <- data %>% select(position:biomedical, id)
+
+covid_only <- data %>% select(contains("covid"), id)
+
