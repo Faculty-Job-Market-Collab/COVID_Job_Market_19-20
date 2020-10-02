@@ -1,6 +1,8 @@
 ---
 title: "Long Form Responses"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -10,10 +12,10 @@ library(tidyverse)
 
 knitr::opts_chunk$set(echo = TRUE)
 
-source("../load_data.R")
+source("../code/load_data.R")
 
-long_data <- clean_data %>% select(Q70, id) %>% filter(!is.na(Q70)) %>% 
-  mutate(response = paste("1. ", Q70, "\n")) %>% 
+long_data <- clean_data %>% select(comments, id) %>% filter(!is.na(comments)) %>% 
+  mutate(response = paste("1. ", comments, "\n")) %>% 
   pull(response) %>% paste(., collapse = "\n")
 ```
 
