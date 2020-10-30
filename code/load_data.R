@@ -1,9 +1,9 @@
 library(tidyverse) #for data wrangling
 library(data.table) #for setnames()
 
-raw_data <- read_csv("../data/raw_job_survey_data.csv") #load data
+raw_data <- read_csv("data/raw_job_survey_data.csv") #load data
 
-q_list <- read_csv("../data/question_legend.csv") #csv of q numbers, full q, & column names
+q_list <- read_csv("data/question_legend.csv") #csv of q numbers, full q, & column names
 
 q_num <- q_list %>% pull(Q_number)#list of q numbers
 

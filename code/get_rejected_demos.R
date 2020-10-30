@@ -1,17 +1,5 @@
-#how many offers were rescinded due to covid?
-
-offers_data <- app_outcomes %>% 
-  select(id, contains("offer")) %>% 
-  mutate_at(c("faculty_offers", "covid_offers_rescinded"), as.numeric)
-
-offers_made <- offers_data %>% pull(faculty_offers) %>% sum(., na.rm = TRUE)
-
-offers_rescinded <- offers_data %>% pull(covid_offers_rescinded) %>% sum(., na.rm = TRUE)
-
-percent_rescinded <- (offers_rescinded/offers_made)*100 #need to correct for differing interpretations, some did not include rescinded offers with the offers made
-
-
-#did applicants reject offers due to covid?
+#explore demographics of applicants that rejected offers due to covid?
+#requires data from "get_offers_data.R"
 
 offer_response_data <- offers_data %>% select(id, offer_responses) %>% 
   mutate(num_resp = str_count(offer_responses, ",")) %>% 
