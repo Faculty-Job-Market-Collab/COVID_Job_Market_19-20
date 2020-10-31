@@ -14,4 +14,39 @@ offer_response_data <- offers_data %>% select(id, offer_responses) %>%
 response_summary <- offer_response_data %>% 
   group_by(response) %>% summarise(n = n())
 
-#12 offers rejected b/c of covid
+
+#% of overall rejections
+reject_summary <- offer_response_data %>% 
+  group_by(id, response) %>% summarise(n = n()) %>% 
+  filter(str_detect(response, "reject") == TRUE) %>% 
+  mutate(covid_reject = )
+
+num_reject <- reject_summary %>% pull(id) %>% unique() %>% length()
+
+covid_rej <- reject_summary %>% 
+  filter(str_detect(response, "Covid")==TRUE) 
+
+num_covid_rej <- covid_rej %>% 
+  pull(id) %>% unique() %>% length()
+
+percent_covid_rej <- get_percent(num_covid_rej, num_reject)
+
+#data set w/ T/F
+covid_rej_ids <- covid_rej %>% 
+  select(id) %>% 
+  mutate(covid_reject = "true")
+
+reject_tf_summary <- left_join(reject_summary, covid_rej_ids, by = "id") %>% 
+  mutate(covid_reject = replace(covid_reject, is.na(covid_reject), "false")) %>% 
+  left_join(., demographics, by = "id")
+
+#Gender - caregiving? kids?     
+
+
+#Racial Minority
+
+
+#Academic Field
+
+
+#Position (PhD, postdoc, other)

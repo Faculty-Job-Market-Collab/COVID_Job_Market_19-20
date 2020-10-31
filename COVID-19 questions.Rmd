@@ -13,13 +13,13 @@ knitr::opts_chunk$set(echo = TRUE)
   + Did this impact offers received?
   + Did this impact the likelihood to reject an offer for any reason?
 
-2. How many offers were rescinded due to covid? Q115
-  + Differences in institution type?
+2. How many offers were rescinded due to covid? Q115 -- See `get_rescinded_demos.R`
+  + ~~Differences in institution type?~~ 
   + Demographic differences?
     + Gender
     + Racial Minority
     + Academic Field
-    + Geographic location (not sure if can pull this, I think we only had them put who they got offers from)
+    + ~~Geographic location (not sure if can pull this, I think we only had them put who they got offers from)~~
     + Position (PhD, postdoc, other)
     
 3. Did applicants alter their strategy? Q116 + follow up survey
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(echo = TRUE)
     +Academic Field
     +Position (PhD, postdoc, other)
     
-4. Did applicants reject offers because of Covid?
+4. Did applicants reject offers because of Covid? -- See `get_rejected_demos.R`
   + % of overall rejections
   + Differences in institution type?
   + Demographic differences?

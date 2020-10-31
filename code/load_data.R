@@ -1,6 +1,9 @@
 library(tidyverse) #for data wrangling
 library(data.table) #for setnames()
 
+source("analysis_functions.R")
+source("get_plot_options.R")
+
 raw_data <- read_csv("data/raw_job_survey_data.csv") #load data
 
 q_list <- read_csv("data/question_legend.csv") #csv of q numbers, full q, & column names
@@ -20,7 +23,8 @@ clean_data <- mutate(data, id = rownames(data)) %>% #generate unique ids
   select(-previous_tenure_track)
 ## question-based datasets----
 
-demographics <- select(clean_data, position:biomedical, id)
+demographics <- select(clean_data, position:biomedical, id) %>% 
+  mutate(gender = if_else(gender=="Non-binary"|gender=="Unlisted gender"|is.na(gender), "Gender minority", gender))
 
 covid_only <- select(clean_data, contains("covid"), id)
 
