@@ -2,42 +2,211 @@
 title: "COVID-19 Questions"
 author: "Ada"
 date: "October 30, 2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include=FALSE, message=FALSE, echo=FALSE}
+knitr::opts_chunk$set(message=FALSE,echo = FALSE,fig.height=4,warning = FALSE,fig.align = "left")
+source("code/load_data.R")
+source("code/get_remote_data.R")
+source("code/get_offers_data.R")
+source("code/get_rescinded_demos.R")
+source("code/get_rejected_demos.R")
+source("code/get_strategy_data.R")
 ```
 1. How many on-site interviews were moved to remote? Q114
-  + Differences in institution type?
+  + Overall
+    + `r num_moved` onsite interviews were moved to remote interviews
+    + `r percent_moved` % of onsite interviews moved to remote
+  + ~~Differences in institution type?~~
   + Did this impact offers received?
   + Did this impact the likelihood to reject an offer for any reason?
 
 2. How many offers were rescinded due to covid? Q115 -- See `get_rescinded_demos.R`
+  + Overall data
+    + `r offers_rescinded` offers were rescinded, total
+    + `r percent_rescinded`% of offers made were rescinded
   + ~~Differences in institution type?~~ 
   + Demographic differences?
+  
     + Gender
+    
+```{r gender_res}
+get_plot_summary(res_demo_data, "gender", "covid_offers_rescinded") %>% 
+  ggplot()+
+  geom_col(aes(x = gender, y=percent_res))
+```
     + Racial Minority
+    
+```{r racial_res}
+res_demo_data %>% 
+  mutate(race_ethnicity = fct_lump(race_ethnicity, n=4)) %>% 
+  get_plot_summary(., "race_ethnicity", "covid_offers_rescinded") %>% 
+  ggplot()+
+  geom_col(aes(x = race_ethnicity, y = percent_res))+
+  coord_flip()+
+  theme(#axis.text.x = element_text(angle = 90),
+        legend.position = "none")
+```
     + Academic Field
+    
+```{r academic_res}
+get_plot_summary(data = res_demo_data, 
+                                   x = "research_category", y = "covid_offers_rescinded") %>% 
+  ggplot()+
+  geom_col(aes(x = research_category, y = percent_res))+
+  coord_flip()+
+  theme(legend.position = "none")
+```
     + ~~Geographic location (not sure if can pull this, I think we only had them put who they got offers from)~~
     + Position (PhD, postdoc, other)
     
-3. Did applicants alter their strategy? Q116 + follow up survey
-  + Differences in institution type?
+```{r position_res}
+get_plot_summary(res_demo_data, "position", "covid_offers_rescinded") %>% 
+  ggplot()+
+  geom_col(aes(x = position, y = percent_res))+
+  coord_flip()
+```
+    
+3. Did applicants alter their strategy? Q116 + follow up survey -- See `get_strategy_data.R`
+  + Overall
+    + `r num_changed` respondents reported changing their research strategy to some extent
+    + `r percent_changed`% of respondents reported changing their research strategy
+  + ~~Differences in institution type?~~
   + Demographic differences?
-    +Gender
-    +Racial Minority
-    +Academic Field
-    +Position (PhD, postdoc, other)
+  
+    + Position
+    
+```{r}
+get_plot_summary(strategy_demo_data, "position", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = position, y=percent_res))+
+  coord_flip()
+```
+    + First Generation Undergrad 
+    
+```{r}
+get_plot_summary(strategy_demo_data, "first_gen_undergrad", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = first_gen_undergrad, y=percent_res))+
+  coord_flip()
+```
+    + First Generation PhD 
+    
+```{r}
+get_plot_summary(strategy_demo_data, "first_gen_phd", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = first_gen_phd, y=percent_res))+
+  coord_flip()
+```
+    + Academic Field 
+    
+```{r}
+get_plot_summary(strategy_demo_data, "research_category", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = research_category, y=percent_res))+
+  coord_flip()
+```
+  + Preparation
+  
+    + App Feedback 
+    
+```{r}
+get_plot_summary(strategy_prep_data, "app_feedback", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = app_feedback, y=percent_res))+
+  coord_flip()
+```
+    + Interview Feedback 
+    
+```{r}
+get_plot_summary(strategy_prep_data, "interview_feedback", "covid_alter") %>% 
+  ggplot()+
+  geom_col(aes(x = interview_feedback, y=percent_res))+
+  coord_flip()
+```
+    
     
 4. Did applicants reject offers because of Covid? -- See `get_rejected_demos.R`
-  + % of overall rejections
-  + Differences in institution type?
+  + Overall
+    + `r num_covid_rej` offers were rejected for COVID-19-related reasons
+    + `r percent_covid_rej` percent of all rejected offers were due to COVID-19-related reasons
+  + ~~Differences in institution type?~~
   + Demographic differences?
-      + Gender - caregiving? kids?
-      + Racial Minority
+      + Gender
+      
+```{r}
+get_plot_summary(reject_summary_demo, "gender", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = gender, y=percent_res))
+```
+      + Dependents
+      
+```{r}
+get_plot_summary(reject_summary_demo, "dependents", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = dependents, y=percent_res))
+```
+      + Primary Caregiver
+      
+```{r}
+get_plot_summary(reject_summary_demo, "primary_caregiver", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = primary_caregiver, y=percent_res))+
+  coord_flip()
+```
+      + Racial Minority - top 4 percentages
+      
+```{r}
+reject_summary_demo %>% 
+  get_plot_summary(., "race_ethnicity", "covid_reject") %>% 
+  arrange(desc(percent_res)) %>% 
+  head(n = 4) %>% 
+    ggplot()+
+  geom_col(aes(x = race_ethnicity, y = percent_res))+
+  coord_flip()+
+  theme(#axis.text.x = element_text(angle = 90),
+    legend.position = "none")
+```
+      + Income
+      
+```{r}
+get_plot_summary(reject_summary_demo, "income", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = income, y=percent_res))+
+  coord_flip()
+```
+      + Disability Status
+      
+```{r}
+get_plot_summary(reject_summary_demo, "disability_status", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = disability_status, y=percent_res))+
+  coord_flip()
+```
       + Academic Field
+      
+```{r}
+get_plot_summary(reject_summary_demo, "research_category", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = research_category, y=percent_res))+
+  coord_flip()
+
+get_plot_summary(reject_summary_demo, "biomedical", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = biomedical, y=percent_res))+
+  coord_flip()
+```
       + Position (PhD, postdoc, other)
+      
+```{r}
+get_plot_summary(reject_summary_demo, "position", "covid_reject") %>% 
+  ggplot()+
+  geom_col(aes(x = position, y=percent_res))+
+  coord_flip()
+```
 
 5. In response to Q52 (How did you respond to any offers received? Please check all that apply.), if participant checked:
   + I rejected offer(s) because of reduced resources directly related to the economic impact of Covid-19
