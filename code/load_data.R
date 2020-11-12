@@ -1,8 +1,8 @@
 library(tidyverse) #for data wrangling
 library(data.table) #for setnames()
 
-source("analysis_functions.R")
-source("get_plot_options.R")
+source("code/analysis_functions.R")
+source("code/get_plot_options.R")
 
 raw_data <- read_csv("data/raw_job_survey_data.csv") #load data
 

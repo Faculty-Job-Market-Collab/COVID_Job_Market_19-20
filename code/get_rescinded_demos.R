@@ -15,12 +15,7 @@ res_demo_data <- left_join(offers_data, demographics, by = "id") %>%
 
 #Gender
 
-gender_res_plot <- res_demo_data %>% 
-  select(gender, covid_offers_rescinded, id) %>% 
-  group_by(gender, covid_offers_rescinded) %>% 
-  summarise(n=n()) %>% 
-  spread(key = covid_offers_rescinded, value = n) %>% 
-  mutate(percent_res = get_percent(true, false)) %>%
+gender_res_plot <- get_plot_summary(res_demo_data, "gender", "covid_offers_rescinded") %>% 
   ggplot()+
   geom_col(aes(x = gender, y=percent_res))
 
@@ -28,11 +23,7 @@ gender_res_plot <- res_demo_data %>%
 
 race_res_plot <- res_demo_data %>% 
   mutate(race_ethnicity = fct_lump(race_ethnicity, n=4)) %>% 
-  select(race_ethnicity, covid_offers_rescinded, id) %>% 
-  group_by(race_ethnicity, covid_offers_rescinded) %>% 
-  summarise(n=n()) %>% 
-  spread(key = covid_offers_rescinded, value = n) %>% 
-  mutate(percent_res = get_percent(true, false)) %>%
+  get_plot_summary(., "race_ethnicity", "covid_offers_rescinded") %>% 
   ggplot()+
   geom_col(aes(x = race_ethnicity, y = percent_res))+
   coord_flip()+
@@ -40,20 +31,15 @@ race_res_plot <- res_demo_data %>%
         legend.position = "none")
 
 #field
-field_res_plot <- get_plot_summary(res_demo_data, "research_category", "covid_offers_rescinded") %>% 
+field_res_plot <- get_plot_summary(data = res_demo_data, 
+                                   x = "research_category", y = "covid_offers_rescinded") %>% 
   ggplot()+
   geom_col(aes(x = research_category, y = percent_res))+
   coord_flip()+
   theme(legend.position = "none")
 
 #position
-position_res_plot <- res_demo_data %>% 
-  select(position, covid_offers_rescinded, id) %>% 
-  group_by(position, covid_offers_rescinded) %>% 
-  summarise(n=n()) %>% 
-  spread(key = covid_offers_rescinded, value = n) %>% 
-  mutate_all(~replace(., is.na(.), 0)) %>% 
-  mutate(percent_res = get_percent(true, false)) %>% 
+position_res_plot <- get_plot_summary(res_demo_data, "position", "covid_offers_rescinded") %>% 
   ggplot()+
   geom_col(aes(x = position, y = percent_res))+
   coord_flip()+

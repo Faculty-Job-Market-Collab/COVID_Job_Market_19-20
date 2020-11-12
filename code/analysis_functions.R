@@ -14,15 +14,17 @@ is_outlier <- function(x) {
 }
 
 
-get_plot_summary <- function(data, x, y){
+get_plot_summary <- function(data, x, y){ #x and y must be provided in quotations
   
   df <- data %>% 
-    select(x, y, id) %>% 
-    group_by(x, y) %>% 
-    summarise(n=n()) #%>% 
-    #spread(key = y, value = n) %>% 
-    #mutate_all(~replace(., is.na(.), 0)) %>% 
-    #mutate(percent_res = get_percent(true, false))
+    select(!!sym(x), !!sym(y), id) %>% #!!sym() allows tidyverse functions to evaluate x and y as column names
+    group_by(!!sym(x), !!sym(y)) %>% 
+    summarise(n=n()) %>% 
+    spread(key = !!sym(y), value = n) %>% 
+    mutate_all(~replace(., is.na(.), 0)) %>% #replace na values w/ 0 to allow percent calculations
+    mutate(percent_res = get_percent(true, false),
+           n = true+false) %>% 
+    mutate('{x}' := paste0(!!sym(x), " (n=", n, ")"))#add n of each group to the group name; '{}' := allows mutate to evaluate the variable x as a column
   
   return(df)
 }
