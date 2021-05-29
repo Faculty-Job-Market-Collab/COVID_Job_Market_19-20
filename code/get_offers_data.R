@@ -27,3 +27,29 @@ response_summary <- offer_response_data %>%
   group_by(response) %>% summarise(n = n())
 
 #12 offers rejected b/c of covid
+
+offers_made <- offers_data %>% pull(faculty_offers) %>% sum(., na.rm = TRUE)
+
+offers_rescinded <- offers_data %>% pull(covid_offers_rescinded) %>% sum(., na.rm = TRUE)
+
+percent_rescinded <- (offers_rescinded/offers_made)*100 #need to correct for differing interpretations, some did not include rescinded offers with the offers made
+
+#Gender, race, field, position
+res_demo_data <- left_join(offers_data, demographics, by = "id") %>% 
+  filter(faculty_offers > 0) %>% 
+  mutate(covid_offers_rescinded = 
+           if_else(is.na(covid_offers_rescinded)|covid_offers_rescinded == 0, "false", "true"))
+
+race_data <- res_demo_data %>% 
+  select(id, race_ethnicity, legal_status, covid_offers_rescinded) %>% 
+  mutate(race_ethnicity = str_remove(race_ethnicity, "\\(.+\\)"),
+         spons_req = fct_collapse(legal_status, 
+                                     "Yes" = c("Temporary student visa (e.g., F1, J1 in U.S.)",
+                                                        "Temporary work visa (e.g., H1B in U.S.)",
+                                                        "Applying from outside the country(ies)", 
+                                                        "Choose not to disclose"),
+                                     "No" = c("Citizen", "Permanent resident"))) %>% 
+  separate(race_ethnicity, sep = ",", into = c("a", "b")) %>% 
+  gather(a:b, key = "test", value = "race_ethnicity") %>% 
+  select(-test) %>% 
+  filter(!is.na(race_ethnicity))

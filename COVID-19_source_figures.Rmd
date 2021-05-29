@@ -1,0 +1,35 @@
+---
+title: "Generate_figures"
+author: "Alliance SciComm & Consulting, LLC"
+date: "4/7/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(rmarkdown)
+library(knitr)
+source("code/load_data.R")
+source("code/analysis_functions.R")
+source("code/get_plot_options.R")
+knitr::opts_chunk$set(message=FALSE,echo = FALSE,fig.height=4,warning = FALSE,fig.align = "left")
+```
+
+
+#Figure 1
+```{r fig_1}
+source("code/get_offers_data.R")
+source("code/figures/figure_1.R")
+```
+
+#Figure 2
+```{r fig_2}
+source("code/load_herc_data.R")
+source("code/figures/figure_2.R")
+```
+
+#Figure 3
+```{r fig_3}
+source("code/get_search_strategy_results.R")
+source("code/figures/figure_3.R")
+```

@@ -18,11 +18,15 @@ data <- raw_data[-c(1,2,3),] %>% #drop non-data rows
 
 setnames(data, old = q_num, new = q_data) #rename columns
 
+#arrange data and split into data sets
 clean_data <- mutate(data, id = rownames(data)) %>% #generate unique ids
   filter(previous_tenure_track == "No" | is.na(previous_tenure_track)) %>%  #drop responders reporting a previous tenure track postion
   select(-previous_tenure_track)
-## question-based datasets----
 
+#dataset for each institution listed w/ pui, ri status, region, etc
+carn_joined_inst <- read_csv("data/full_survey_inst_data.csv")
+
+## question-based datasets----
 demographics <- select(clean_data, position:biomedical, id) %>% 
   mutate(gender = if_else(gender=="Non-binary"|gender=="Unlisted gender"|is.na(gender), "Gender minority", gender))
 

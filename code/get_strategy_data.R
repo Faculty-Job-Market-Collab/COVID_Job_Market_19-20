@@ -30,34 +30,40 @@ changed_prep <- strategy_prep_data %>%
 get_plot_summary(strategy_demo_data, "position", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = position, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")
 
 #field(s)
 get_plot_summary(strategy_demo_data, "research_category", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = research_category, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")
 
 #first gen
 get_plot_summary(strategy_demo_data, "first_gen_undergrad", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = first_gen_undergrad, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")
 
 get_plot_summary(strategy_demo_data, "first_gen_phd", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = first_gen_phd, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")
 
 #prep plots ----
 #app feedback
 get_plot_summary(strategy_prep_data, "app_feedback", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = app_feedback, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")
 
 #interview feedback
 get_plot_summary(strategy_prep_data, "interview_feedback", "covid_alter") %>% 
   ggplot()+
   geom_col(aes(x = interview_feedback, y=percent_res))+
-  coord_flip()
+  coord_flip()+
+  labs(y = "Percent Changed Strategy")

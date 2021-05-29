@@ -1,0 +1,16 @@
+---
+title: "description_salary_plot"
+author: "Alliance SciComm & Consulting, LLC"
+date: "5/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+knitr::opts_chunk$set(echo = TRUE)
+
+data <- read_csv("data/plot_salary_data.csv")
+```
+
+`r print(data$Description)`

@@ -28,3 +28,4 @@ get_plot_summary <- function(data, x, y){ #x and y must be provided in quotation
   
   return(df)
 }
+
