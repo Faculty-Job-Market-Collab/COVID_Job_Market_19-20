@@ -185,19 +185,27 @@ missing <- inst_join %>%
   ) %>% 
   distinct()
 
-slice_list <- c(3, 4, 31, 46, 77, 88, 89, 117, 177, 304, 387, 467, 499, 500, 519, 520, 532, 583, 585, 595, 600, 601, 608, 609, 615, 616, 618, 639, 641, 642, 644, 645, 653:657, 666)
+slice_list <- c(3, 4, 31, 46, 47, 77, 88, 89, 117, 176, 303, 386, 466, 498, 499, 518, 519, 531, 582, 584, 594, 599, 600, 607, 608, 614, 615, 617, 638, 640, 641, 643, 644, 652:656, 665)
 
 check_missing_matches <- missing %>% 
   filter(!is.na(NAME)) %>% 
   filter(inst_name != NAME) %>% 
   slice(slice_list)
 
+final_missing <- missing %>% 
+  filter(!is.na(NAME)) %>% 
+  filter(inst_name != NAME) %>% 
+  slice(-slice_list) %>% 
+  select(inst_name) %>% distinct()
+
 all_matches <- missing %>% 
   filter(inst_name == NAME) %>% 
   rbind(., matches, check_missing_matches)
 
+write_csv(final_missing, "data/missing_unis.csv")
+
 write_csv(all_matches, "data/carnegie_inst_matches.csv")
-#
+
 write_csv(carnegie_data, "data/clean_carnegie_data.csv")
-#
+
 write_csv(extend_surv_inst, "data/cleaned_survey_inst.csv")

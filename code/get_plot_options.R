@@ -12,11 +12,13 @@ my_theme <- theme_classic() +
         plot.caption=element_text(size=12, hjust=.5),
         plot.subtitle = element_text(size = 12, hjust = .5))
 
-my_theme_horiz <- theme_classic() + 
-  theme(legend.position = "none", axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold"), 
+my_theme_horiz <- theme_classic()+ 
+  theme(legend.position = "none", axis.text=element_text(size=12), 
+        axis.title=element_text(size=14,face="bold"), 
         plot.title = element_text(size=16,face="bold"),
         plot.caption = element_text(size=12, hjust=.5),
-        plot.subtitle = element_text(size = 12, hjust = .5))
+        plot.subtitle = element_text(size = 12, hjust = .5),
+        panel.border = element_blank())
 
 my_theme_leg <- theme_classic() + 
   theme(axis.text=element_text(size=12), axis.title=element_text(size=14,face="bold"), 

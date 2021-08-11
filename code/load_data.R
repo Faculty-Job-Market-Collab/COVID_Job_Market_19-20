@@ -24,7 +24,8 @@ clean_data <- mutate(data, id = rownames(data)) %>% #generate unique ids
   select(-previous_tenure_track)
 
 #dataset for each institution listed w/ pui, ri status, region, etc
-carn_joined_inst <- read_csv("data/full_survey_inst_data.csv")
+carn_joined_inst <- read_csv("data/full_survey_inst_data.csv") %>% 
+  mutate(id = as.character(id))
 
 ## question-based datasets----
 demographics <- select(clean_data, position:biomedical, id) %>% 

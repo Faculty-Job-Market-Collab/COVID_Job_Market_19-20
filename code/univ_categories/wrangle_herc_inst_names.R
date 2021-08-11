@@ -3,6 +3,8 @@ source("code/herc_analysis/load_herc_data.R")
 
 source("code/univ_categories/get_carn_data.R")
 
+source("code/univ_categories/us_region_functions.R")
+
 source("code/univ_categories/wrangle_uni_functions.R")
 
 fix_herc_inst <- function(x){
@@ -122,26 +124,7 @@ non_carn_herc_join <- left_join(no_carn_herc_inst, non_carn_unis,
   select(-contains(".x"), -contains(".y"), -contains("Institution"))
 
 #join herc data together & wrangle for full data set----
-
 herc_matches <- bind_rows(all_herc_matches, non_carn_herc_join) %>% 
-  distinct() %>% 
-  mutate(LocationDisplay = map(LocationDisplay, function(x){str_remove(x, ".*, ")}),
-         LocationDisplay = unlist(LocationDisplay),
-         State_Providence = map2(LocationDisplay, STABBR, if(str_detect(.x, .y)){paste(.y)}), #having trouble identifying the US region
-         State_Providence = unlist(State_Providence),
-         State_Providence = map2(LocationDisplay, State_name, if(str_detect(.x, .y)){paste(.y)}),
-         State_Providence = unlist(State_Providence),
-         Country = if(str_dectect(LocationDisplay, State_name)){paste("USA")},
-         Country = if(str_detect(State_Providence, STABBR)){paste("USA")}
-         ) %>% 
-  #left_join(., us_regions, by = c("State_Providence" = "State_abbvr")) %>% 
-  select(-State_name, -STABBR) %>% 
-  rename(US_region = Region) %>% 
-  mutate(world_region = map(LocationDisplay, get_world_region),
-         world_region = unlist(world_region),
-         world_region = map(Country, get_world_region),
-         world_region = unlist(world_region),
-         Description = unlist(Description)) %>% 
-  select(-LocationDisplay, -Country)
-  
-write_csv(herc_matches, "data/herc_clean_matches.csv")
+  distinct() 
+
+write_csv(herc_matches, "data/herc_intermediate.csv")

@@ -1,8 +1,11 @@
 ---
-title: "Generate_figures"
+title: "Response of the academic job market to COVID-19: Data analysis"
 author: "Alliance SciComm & Consulting, LLC"
-date: "4/7/2021"
-output: pdf_document
+date: "7/28/2021"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -10,26 +13,98 @@ library(tidyverse)
 library(rmarkdown)
 library(knitr)
 source("code/load_data.R")
-source("code/analysis_functions.R")
-source("code/get_plot_options.R")
-knitr::opts_chunk$set(message=FALSE,echo = FALSE,fig.height=4,warning = FALSE,fig.align = "left")
+knitr::opts_chunk$set(
+	echo = FALSE,
+	fig.align = "left",
+	fig.height = 4,
+	message = FALSE,
+	warning = FALSE
+)
 ```
 
 
-#Figure 1
+## Figure 1 Related Data
 ```{r fig_1}
 source("code/get_offers_data.R")
 source("code/figures/figure_1.R")
 ```
+1. Overall response rate to the offers rescinded question: `r response_rate`%
 
-#Figure 2
+1. Offers made: `r offers_made`
+
+1. Offers rescinded: `r offers_rescinded`
+
+1. Overall offers rescinded: `r percent_rescinded`%
+
+1. Offers rescinded according to the requirement for visa sponsorship:
+  `r kable(visa_rescinded)`
+
+## Figure 2 Related Data
 ```{r fig_2}
-source("code/load_herc_data.R")
+month_levels <- c(
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+
+herc_data <- read_csv("data/final_herc_clean_data.csv") %>% 
+  mutate(YearPosted = as_factor(YearPosted),
+         MonthPosted = factor(MonthPosted, levels = month_levels))
+
+source("code/herc_analysis/get_ecr_ads.R")
+source("code/herc_analysis/get_adjuct_ads.R")
 source("code/figures/figure_2.R")
 ```
+1. Posting of assistant professor positions by institution region and month. Only regions contributing at least 2% of the postings from June to December are included: `r kable(ecr_region_month_data)`
 
-#Figure 3
+2. Posting of temporary faculty positions by institution region and month. Only regions contributing at least 3% of the postings from June to December are included: `r kable(temp_region_month_data)`
+
+3. Posting of temporary faculty positions by institution type from June to December: `r kable(temp_inst_data)`
+
+## Figure 3 Related Data
 ```{r fig_3}
+source("code/get_strategy_data.R")
 source("code/get_search_strategy_results.R")
 source("code/figures/figure_3.R")
 ```
+1. Current positions of the respondents to the mid-pandemic survey: `r kable(position_num)`
+
+2. Mid-pandemic responses (by respondents applying during the 2020-2021 hiring cycle) to the following statements:
+
+  + "I am not planning on doing any in-person interviews even if asked": `r kable(refuse_inperson)`
+  + "I limited my applications geographically based on local outbreaks and/or covid regulations": `r kable(geog_rest)`
+  + "If you receive an offer, how much will you consider the offering university/department's current adaptations to the Covid-19 pandemic in your decision to accept?": `r kable(offer_summary)`
+
+2. Mid-pandemic responses when asked about their reasons for changing career paths: `r kable(chx_career)`
+
+4. Mid-pandemic responses when asked about their reasons for waiting to apply: `r kable(wait)`
+
+
+```{r stats}
+source("code/get_remote_data.R")
+source("code/get_rescinded_demos.R")
+source("code/get_rejected_demos.R")
+
+```
+## Other Potentially Relevant Data:
+
+1. How many on-site interviews were moved to remote?
+  + Overall
+    + `r num_moved` onsite interviews were moved to remote interviews
+    + `r percent_moved` % of onsite interviews moved to remote
+
+3. Did applicants alter their strategy?
+  + Overall
+    + `r num_changed` respondents reported changing their research strategy to some extent
+    + `r percent_changed`% of respondents reported changing their research strategy
+    
+4. Did applicants reject offers because of COVID-19? 
+  + Overall
+    + `r num_covid_rej` offers were rejected for COVID-19-related reasons
+    + `r percent_covid_rej` percent of all rejected offers were due to COVID-19-related reasons
+    + `r response_summary[[13,2]]` rejected offer(s) because of reduced resources directly related to the economic impact of COVID-19
+    + `r response_summary[[10,2]]` rejected offer(s) because of other reasons pertaining to the impact of COVID-19
+
+![Survey respondents who indicated that they received faculty offers were asked to name the institutions that they received offers from and to indicate how many of those offers were rescinded. Non-responses to the question regarding rescinded offers were omitted from the analysis. n = the number of offers; r = the number of offers rescinded. The percent of offers rescinded were calculated based on the respondent's A) Reported gender, B) Reported research category, C) Reported race/ethnicity, D) Institution type extending the offer (where available), and E) the US region of the institution extending the offer (where available).]("figures/Figure_1.png")
+
+![The impact of the COVID-19 pandemic on the academic job market. Job posting data from January 2018 to December 2020 were obtained from the Higher Education Recruitment Consortium and plotted for each year according to the month the jobs were posted and the type of jobs: A) All tenure track positions, B) Assistant professor tenure track positions, and C) temporary faculty positions, which included advertisements for adjunct, fixed-term, and non-tenure-track lecturers or faculty; does not include post-doctoral positions. To understand the job availability for the 2020-2021 faculty hiring cycle, the postions posted between June and December 2020 were plotted according to the percent A) located in US regions and B) posted by either research intensive (RI) or primarily undergraduate serving (PUI) institutions. n = number of postions in that category.]("figures/Figure_2.png")
+
+![A comparison of early and mid-pandemic attitudes on search strategy and academia. The percent of respondents in each research category that indicated an alteration to their research statements to either AB) focus on remote or computational research in response to the pandemic or B) include pandemic-related areas such as coronavirus or COVID-19 when they would not have otherwise done so. C) The percent of early pandemic respondents that altered their research statement to focus on remote or computational research based on their first generation PhD status. D) The percent of mid-pandemic respondents interested in either research intensive or primarily undergraduate serving institutions that altered their research statements to either add pandemic-related research (left panel) or to be more remote friendly (center panel) as well as those who altered their teaching statements to include more online practices (right panel). E) The commitment (%) of early pandemic respondents (who did not recieve a job offer during the 2019-2020 hiring cycle) to attaining an academic faculty position. The responses (%) of mid-pandemic respondents when asked about their plans to submit faculty position applications during the 2020-2021 hiring cycle. n = the number of respondents.]("figures/Figure_3.png")

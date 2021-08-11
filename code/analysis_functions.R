@@ -23,7 +23,8 @@ get_plot_summary <- function(data, x, y){ #x and y must be provided in quotation
     spread(key = !!sym(y), value = n) %>% 
     mutate_all(~replace(., is.na(.), 0)) %>% #replace na values w/ 0 to allow percent calculations
     mutate(percent_res = get_percent(true, false),
-           n = true+false) %>% 
+           n = true+false,
+           r = paste0("r=", true)) %>% 
     mutate('{x}' := paste0(!!sym(x), " (n=", n, ")"))#add n of each group to the group name; '{}' := allows mutate to evaluate the variable x as a column
   
   return(df)

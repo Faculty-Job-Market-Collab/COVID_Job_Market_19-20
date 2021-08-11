@@ -6,14 +6,11 @@
 # We want tenure track faculty positions specifically for early career applicants
 
 # Task 1: Identify all entries that are for tenure track faculty positions for early career applicants. 
-ten_track_data <- clean_herc_data %>% 
+ten_track_data <- herc_data %>% 
   filter(TenureTrack == "Yes") %>% 
   filter(str_detect(Description, "fixed term") == FALSE) %>% 
   filter(str_detect(Title, "Postdoc") == FALSE) %>% 
-  mutate(YearPosted = year(DateTimePosted) %>% as_factor(.),
-         MonthPosted = month(DateTimePosted, label = TRUE),
-         MonthPosted = factor(MonthPosted, levels = month_levels),
-         ECR = if_else(str_detect(Title, "Assistant"), "Yes", "No")) 
+  mutate(ECR = if_else(str_detect(Title, "Assistant"), "Yes", "No")) 
 
 #All tenure track positions
 ten_track_summary <- ten_track_data %>% 

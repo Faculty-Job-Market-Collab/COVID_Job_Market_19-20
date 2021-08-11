@@ -13,6 +13,7 @@ EMR <- c("Afghanistan", "Bahrain", "Djibouti", "Egypt", "Iran", "Iraq", "Jordan"
 
 WPR <- c("Australia", "Brunei", "Cambodia", "China", "Cook Islands", "Fiji", "Japan", "Kiribati", "Laos", "Malaysia", "Marshall Islands", "Micronesia", "Mongolia", "Nauru", "New Zealand", "Niue", "Palau", "Papua New Guinea", "Philippines", "Samoa", "Singapore", "Solomon Islands", "South Korea", "Taiwan", "Tonga", "Tuvalu", "Vanuatu", "Vietnam")
 
+#FUNCTIONS -----
 get_world_region <- function(x){
   case_when(
     x %in% AFR ~ "African",
@@ -23,6 +24,22 @@ get_world_region <- function(x){
     x %in% WPR ~ "Western Pacific",
     x == "Canada" | x == "canada" ~ "Canada",
     x == "USA" ~ "USA"
+  )
+}
+
+#get nonUS/nonCarn inst
+fix_non_carn <- function(x){
+  case_when(
+    str_detect(x, "Calagary") ~ "University Of Calgary",
+    str_detect(x, "Curie") ~ "Pierre And Marie Curie University",
+    str_detect(x, "Zürich|Zurich") ~ "University Of Zurich",
+    str_detect(x, "Qub") ~ "Queens University Belfast",
+    str_detect(x, "Max Planck") ~ "Max Planck Institute",
+    str_detect(x, "Oklahoma Medical Research") ~ "Oklahoma Medical Research Foundation",
+    str_detect(x, "Tifr") ~ "National Center For Biological Sciences University Tifr India",
+    str_detect(x, "Scripps Research") ~ "Scripps Research Institute",
+    str_detect(x, "Imp Vienna") ~ "Imp University Vienna",
+    TRUE ~ x
   )
 }
 
@@ -48,12 +65,20 @@ carn_region_join <- all_matches %>%
   rename(US_region = Region, State_Providence = State_name) %>% 
   mutate(Country = "USA")
 
-#merge non-carn data w/ inst missing data----
+#identify & prep inst missing data----
 no_carn_surv_inst <- anti_join(clean_surv_inst, all_matches, 
                      by = c("id", "inst_type")) %>% 
   mutate(inst_name = map(inst_name, fix_non_carn),
          inst_name = unlist(inst_name))
 
+#source non-carn universities/institutions----
+non_carn_unis <- read_csv("data/non-carnegie_unis.csv") %>% ## Need to work on matching inst names for non-carn inst
+  mutate(Institution = str_to_title(Institution),
+         Institution = str_remove_all(Institution, "'"),
+         `Full Institution Name` = str_remove_all(`Full Institution Name`, "'"),
+         `Full Institution Name` = str_to_title(`Full Institution Name`))
+
+#merge non-carn data w/ inst missing data----
 non_carn_join <- left_join(no_carn_surv_inst, non_carn_unis, 
                            by = c("inst_name" = "Institution")) %>% 
   left_join(., non_carn_unis, 
@@ -69,7 +94,8 @@ non_carn_join <- left_join(no_carn_surv_inst, non_carn_unis,
   mutate(world_region = map(Country, get_world_region),
          world_region = unlist(world_region))
 
-all_inst_data <- bind_rows(carn_region_join, non_carn_join)
+all_inst_data <- bind_rows(carn_region_join, non_carn_join) %>% 
+  mutate(world_region = if_else(is.na(world_region), Country, world_region))
 
 write_csv(all_inst_data, "data/full_survey_inst_data.csv")
 

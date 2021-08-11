@@ -99,6 +99,7 @@ fix_inst_abbrv <- function(x){
     str_detect(x, "Of Rochester|Georgetown") ~ str_remove(x, " Medical Center"),
     str_detect(x, "West Virginia") ~ str_replace(x, "School", "Institute"),
     str_detect(x, "Champaign Urbana") ~ str_replace(x, "Champaign Urbana", "Urbana Champaign"),
+    str_detect(x, "California Institute Of Teaching") ~ "California State University Chico",
     TRUE ~ x
   )
 }
@@ -171,9 +172,9 @@ replace_uny <- function(x){
   
   x <- x
   
-  if(str_detect(x, "Cuny|Suny|City University of New York|State University Of New York") == TRUE){
+  if(str_detect(x, "Cuny|Suny|City University Of New York|State University Of New York") == TRUE){
     
-    which_uny <- if_else(str_detect(str_to_title(x), "Cuny|City of New"), "CUNY", "SUNY")
+    which_uny <- if_else(str_detect(str_to_title(x), "Cuny|City Of New"), "CUNY", "SUNY")
     
     if(which_uny == "CUNY"){
       no_cuny <- str_remove_all(x, " \\(Cuny\\)|CUNY$|Cuny$|^Cuny|Cuny|City University of New York")

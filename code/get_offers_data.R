@@ -2,7 +2,17 @@
 
 offers_data <- app_outcomes %>% 
   select(id, contains("offer")) %>% 
-  mutate_at(c("faculty_offers", "covid_offers_rescinded"), as.numeric)
+  mutate_at(c("faculty_offers", "covid_offers_rescinded"), as.numeric) %>% 
+  filter(!is.na(covid_offers_rescinded))
+
+response_rate <- app_outcomes %>% 
+  select(id, contains("offer")) %>% 
+  mutate_at(c("faculty_offers", "covid_offers_rescinded"), as.numeric) %>% 
+  filter(faculty_offers > 0) %>% 
+  count(covid_offers_rescinded) %>% 
+  mutate(rate = get_percent(n, sum(n))) %>% 
+  filter(!is.na(covid_offers_rescinded)) %>% 
+  summarise(rate = sum(rate)) %>% pull(rate) #91.5%
 
 offers_made <- offers_data %>% pull(faculty_offers) %>% sum(., na.rm = TRUE)
 
@@ -46,10 +56,18 @@ race_data <- res_demo_data %>%
          spons_req = fct_collapse(legal_status, 
                                      "Yes" = c("Temporary student visa (e.g., F1, J1 in U.S.)",
                                                         "Temporary work visa (e.g., H1B in U.S.)",
-                                                        "Applying from outside the country(ies)", 
-                                                        "Choose not to disclose"),
+                                                        "Applying from outside the country(ies)"),
                                      "No" = c("Citizen", "Permanent resident"))) %>% 
   separate(race_ethnicity, sep = ",", into = c("a", "b")) %>% 
   gather(a:b, key = "test", value = "race_ethnicity") %>% 
   select(-test) %>% 
   filter(!is.na(race_ethnicity))
+
+visa_rescinded <- race_data %>% 
+  count(spons_req, covid_offers_rescinded) %>% 
+    #as_tibble() %>% 
+    spread(key = covid_offers_rescinded, value = n) %>% 
+    mutate(total = true + false,
+           total = if_else(is.na(total), "0", as.character(total)),
+           percent_res = get_percent(true, total)) %>% 
+    select(spons_req, total, percent_res)
